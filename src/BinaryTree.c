@@ -8,16 +8,18 @@
 
 #include "BinaryTree.h"
 
-#include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 struct t_BinaryTreeNode
 {
-    int value;
+    uint8_t value;
     Node *left, *right;
 };
 
-Node *create(int value)
+Node *create(uint8_t value)
 {
     Node *node = NULL;
 
@@ -45,7 +47,7 @@ void destroy(Node *node)
     free(node);
 }
 
-int getValue(Node *node)
+uint8_t getValue(Node *node)
 {
     assert(NULL != node);
 
@@ -66,16 +68,74 @@ Node *getRight(Node *node)
     return node->right;
 }
 
-void setLeft(Node *node, int value)
+void setLeft(Node *node, uint8_t value)
 {
     assert(NULL != node);
 
     node->left = create(value);
 }
 
-void setRight(Node *node, int value)
+void setRight(Node *node, uint8_t value)
 {
     assert(NULL != node);
 
     node->right = create(value);
+}
+
+int size(Node *node)
+{
+    int result = 0;
+
+    if (NULL != node)
+    {
+        result += size(node->left);
+        result += size(node->right);
+        ++result;
+    }
+
+    return result;
+}
+
+char *serializeNode(Node *node, char *result)
+{
+    assert(NULL != node);
+
+    sprintf(result, "%03d,", node->value);
+    result += 4;
+
+    sprintf(result, "%c,", (NULL != node->left) ? 'Y' : 'N');
+    result += 2;
+
+    sprintf(result, "%c;", (NULL != node->right) ? 'Y' : 'N');
+    result += 2;
+
+    if (NULL != node->left)
+    {
+        result = serializeNode(node->left, result);
+    }
+
+    if (NULL != node->right)
+    {
+        result = serializeNode(node->right, result);
+    }
+
+    // Return the end of the string
+    return result;
+}
+
+const char *serialize(Node *node)
+{
+    int totalSize;
+    char *result;
+
+    assert(NULL != node);
+
+    totalSize = size(node);
+    // format for each node is: ###,B,B;
+    result = malloc((8 * sizeof(char) * totalSize) + 1);
+    memset(result, 0, (8 * sizeof(char) * totalSize) + 1);
+
+    serializeNode(node, result);
+
+    return result;
 }

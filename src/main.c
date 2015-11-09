@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Vraiment.
 //
 
+#include <assert.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "BinaryTree.h"
@@ -48,7 +48,7 @@ int main(int argc, const char * argv[])
 
     if (NULL != tree)
     {
-        free(tree);
+        destroy(tree);
     }
 
     return 0;
@@ -93,7 +93,16 @@ Node *generateTree()
 
 void writeFile(Node *node, const char *fileName)
 {
+    FILE *file = fopen(fileName, "w");
+    const char *string = NULL;
 
+    assert(NULL != file);
+
+    string = serialize(node);
+
+    fprintf(file, "%s", string);
+
+    fclose(file);
 }
 
 Node *readFile(const char *fileName)

@@ -9,20 +9,26 @@
 #ifndef BinaryTree_h
 #define BinaryTree_h
 
+#include <inttypes.h>
+
 typedef struct t_BinaryTreeNode Node;
 
-Node *create(int value);
+Node *create(uint8_t value);
 
 void destroy(Node *node);
 
-int getValue(Node *node);
+uint8_t getValue(Node *node);
 
 Node *getLeft(Node *node);
 
 Node *getRight(Node *node);
 
-void setLeft(Node *node, int value);
+void setLeft(Node *node, uint8_t value);
 
-void setRight(Node *node, int value);
+void setRight(Node *node, uint8_t value);
+
+int size(Node *node);
+
+const char *serialize(Node *node);
 
 #endif /* BinaryTree_h */

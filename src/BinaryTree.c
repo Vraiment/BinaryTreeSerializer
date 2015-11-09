@@ -123,7 +123,7 @@ char *serializeNode(Node *node, char *result)
     return result;
 }
 
-const char *serialize(Node *node)
+char *serialize(Node *node)
 {
     int totalSize;
     char *result;
@@ -131,11 +131,57 @@ const char *serialize(Node *node)
     assert(NULL != node);
 
     totalSize = size(node);
-    // format for each node is: ###,B,B;
+    // format for each node is: ###,B,B; (where B is either Y or N)
     result = malloc((8 * sizeof(char) * totalSize) + 1);
     memset(result, 0, (8 * sizeof(char) * totalSize) + 1);
 
     serializeNode(node, result);
 
     return result;
+}
+
+uint8_t str2byte(char *string)
+{
+    uint8_t result = 0;
+
+    result += (string[0] - 48) * 100;
+    result += (string[1] - 48) * 10;
+    result += string[2] - 48;
+
+    return result;
+}
+
+char *deserializeNode(Node *node, char *string)
+{
+    char *value = string;
+    char *next = string + 8;
+    char hasLeft = *(string + 4);
+    char hasRight = *(string + 6);
+
+    node->value = str2byte(value);
+
+    if ('Y' == hasLeft)
+    {
+        node->left = create(0);
+        next = deserializeNode(node->left, next);
+    }
+
+    if ('Y' == hasRight)
+    {
+        node->right = create(0);
+        next = deserializeNode(node->right, next);
+    }
+
+    return next;
+}
+
+Node *deserialize(char *string)
+{
+    Node *node = create(0);
+
+    assert(NULL != string);
+
+    deserializeNode(node, string);
+
+    return node;
 }

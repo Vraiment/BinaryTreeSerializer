@@ -8,6 +8,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "BinaryTree.h"
@@ -91,21 +92,43 @@ Node *generateTree()
     return result;
 }
 
-void writeFile(Node *node, const char *fileName)
+void writeFile(Node *tree, const char *fileName)
 {
     FILE *file = fopen(fileName, "w");
-    const char *string = NULL;
+    char *string = NULL;
 
     assert(NULL != file);
 
-    string = serialize(node);
+    string = serialize(tree);
 
     fprintf(file, "%s", string);
+
+    free(string);
 
     fclose(file);
 }
 
 Node *readFile(const char *fileName)
 {
-    return NULL;
+    Node *tree = NULL;
+    FILE *file = fopen(fileName, "r");
+    long size = 0;
+    char *string = NULL;
+
+    assert(NULL != file);
+
+    fseek(file, 0L, SEEK_END);
+    size = ftell(file);
+
+    string = malloc((sizeof(char) * size) + 1);
+    memset(string, 0, (sizeof(char) * size) + 1);
+
+    fseek(file, 0, SEEK_SET);
+    fread(string, sizeof(char), size, file);
+
+    tree = deserialize(string);
+
+    free(string);
+
+    return tree;
 }

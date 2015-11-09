@@ -29,6 +29,8 @@ void setRight(Node *node, uint8_t value);
 
 int size(Node *node);
 
-const char *serialize(Node *node);
+char *serialize(Node *node);
+
+Node *deserialize(char *string);
 
 #endif /* BinaryTree_h */
